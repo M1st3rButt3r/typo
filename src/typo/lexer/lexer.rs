@@ -1,9 +1,8 @@
 use std::fmt;
 use std::fmt::{Debug, Formatter};
 use crate::lexer::token::Token;
-use crate::lexer::token::TokenType::{FLOAT, INTEGER};
 
-#[path = "./token.rs"]
+#[path = "token.rs"]
 mod token;
 
 pub struct Lexer {
@@ -26,7 +25,7 @@ impl Lexer {
         let mut tokens = Vec::new();
         while self.current_char != '\0' {
             let token = self.make_token().ok().unwrap();
-            if token.token_type != token::TokenType::NONE {
+            if token != token::Token::NONE {
                 tokens.push(token);
             }
         }
@@ -41,16 +40,10 @@ impl Lexer {
     fn make_token(&mut self) -> Result<Token, IllegalCharError> {
         let token: Result<Token, IllegalCharError>;
         if [' ', '\n'].contains(&self.current_char) {
-            token = Ok(Token {
-                token_type: token::TokenType::NONE,
-                value: String::new(),
-            });
+            token = Ok(Token::NONE);
             self.advance();
         } else if ['+', '-', '*', '/', '(', ')'].contains(&self.current_char) {
-            token = Ok(Token {
-                token_type: token::TokenType::AS,
-                value: self.current_char.to_string(),
-            });
+            token = Ok(Token::AS(self.current_char));
             self.advance();
         } else if self.current_char.is_numeric() {
             token = self.make_number()
@@ -76,15 +69,9 @@ impl Lexer {
         }
 
         return if dot_count == 0 {
-            Ok(Token {
-                token_type: INTEGER,
-                value: digits,
-            })
+            Ok(Token::INTEGER(digits.parse().unwrap()))
         } else {
-            Ok(Token {
-                token_type: FLOAT,
-                value: digits,
-            })
+            Ok(Token::FLOAT(digits.parse().unwrap()))
         };
     }
 }

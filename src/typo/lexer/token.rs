@@ -1,11 +1,11 @@
 use std::fmt;
-use std::fmt::{Formatter, Pointer};
+use std::fmt::Formatter;
 
 #[derive(Debug, PartialEq)]
 pub enum TokenType {
     AS,
     FLOAT,
-    INT,
+    INTEGER,
     NONE
 }
 

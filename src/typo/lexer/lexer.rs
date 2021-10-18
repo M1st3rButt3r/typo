@@ -2,8 +2,11 @@ use std::fmt;
 use std::fmt::{Debug, Formatter};
 use crate::lexer::token::Token;
 
+#[path = "rules.rs"]
+mod rules;
+
 #[path = "token.rs"]
-mod token;
+pub mod token;
 
 pub struct Lexer {
     pub chars: Vec<char>,
@@ -32,52 +35,23 @@ impl Lexer {
         return tokens;
     }
 
+    fn make_token(&mut self) -> Result<Token, IllegalCharError> {
+        for rule in rules::RULES {
+            if (rule.evaluate)(self.current_char) {
+                return (rule.create)(self);
+            }
+        }
+        return Err(IllegalCharError);
+    }
+
     fn advance(&mut self) {
         self.index += 1;
         self.current_char = if self.index < self.chars.len() { self.chars[self.index] } else { '\0' };
     }
-
-    fn make_token(&mut self) -> Result<Token, IllegalCharError> {
-        let token: Result<Token, IllegalCharError>;
-        if [' ', '\n'].contains(&self.current_char) {
-            token = Ok(Token::NONE);
-            self.advance();
-        } else if ['+', '-', '*', '/', '(', ')'].contains(&self.current_char) {
-            token = Ok(Token::AS(self.current_char));
-            self.advance();
-        } else if self.current_char.is_numeric() {
-            token = self.make_number()
-        } else {
-            token = Err(IllegalCharError);
-        }
-        return token;
-    }
-
-    fn make_number(&mut self) -> Result<Token, IllegalCharError> {
-        let mut digits = String::new();
-        let mut dot_count = 0;
-        while self.current_char.is_numeric() || self.current_char == '.' {
-            if self.current_char == '.' {
-                if dot_count > 0 {
-                    return Err(IllegalCharError);
-                }
-                dot_count += 1;
-            }
-            digits.push(self.current_char);
-
-            self.advance();
-        }
-
-        return if dot_count == 0 {
-            Ok(Token::INTEGER(digits.parse().unwrap()))
-        } else {
-            Ok(Token::FLOAT(digits.parse().unwrap()))
-        };
-    }
 }
 
 #[derive(Debug)]
-struct IllegalCharError;
+pub struct IllegalCharError;
 
 impl fmt::Display for IllegalCharError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {

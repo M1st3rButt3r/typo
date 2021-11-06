@@ -21,6 +21,6 @@ fn main() {
 
         let mut parser = Parser::new(&mut lexer.make_tokens());
 
-        println!("{}", parser.parse());
+        println!("{}", parser.parse().unwrap());
     }
 }

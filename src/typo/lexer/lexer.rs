@@ -1,6 +1,7 @@
 use std::fmt;
 use std::fmt::{Debug, Formatter};
 use crate::lexer::token::Token;
+use std::result::Result;
 
 #[path = "rules.rs"]
 mod rules;

@@ -40,9 +40,14 @@ impl Parser {
             let ars = self.current_token;
             self.advance();
             return Ok(node::Node::UnOp(ars, Box::new(self.factor().unwrap())))
-        }
-
-        if matches!(self.current_token, Token::FLOAT(_)) || matches!(self.current_token, Token::INTEGER(_))  {
+        } else if matches!(self.current_token, Token::AS('(')) {
+            self.advance();
+            let expr = self.expr();
+            if matches!(self.current_token, Token::AS(')')) {
+                self.advance();
+                return Ok(expr.unwrap())
+            }
+        } else if matches!(self.current_token, Token::FLOAT(_)) || matches!(self.current_token, Token::INTEGER(_))  {
             let node = node::Node::Number(self.current_token);
             self.advance();
             return Ok(node);

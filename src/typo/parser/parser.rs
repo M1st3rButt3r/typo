@@ -36,6 +36,12 @@ impl Parser {
     }
 
     fn factor(&mut self) -> Result<node::Node, SyntaxError> {
+        if matches!(self.current_token, Token::AS('+')) || matches!(self.current_token, Token::AS('-')) {
+            let ars = self.current_token;
+            self.advance();
+            return Ok(node::Node::UnOp(ars, Box::new(self.factor().unwrap())))
+        }
+
         if matches!(self.current_token, Token::FLOAT(_)) || matches!(self.current_token, Token::INTEGER(_))  {
             let node = node::Node::Number(self.current_token);
             self.advance();

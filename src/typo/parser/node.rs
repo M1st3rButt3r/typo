@@ -6,7 +6,8 @@ use crate::lexer::token::Token;
 pub enum Node {
     None,
     Number(Token),
-    BinOp(Token, Box<Node>, Box<Node>)
+    BinOp(Token, Box<Node>, Box<Node>),
+    UnOp(Token, Box<Node>)
 }
 
 impl fmt::Display for Node {

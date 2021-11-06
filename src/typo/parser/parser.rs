@@ -1,4 +1,6 @@
-#[path = "./node.rs"] mod node;
+#[path = "./node.rs"]
+mod node;
+
 use std::boxed::Box;
 use crate::lexer::token::Token;
 use std::fmt::{Debug, Formatter};
@@ -18,7 +20,7 @@ impl Parser {
         Parser {
             tokens: unmut_tokens,
             current_token: tokens[0],
-            index: 0
+            index: 0,
         }
     }
 
@@ -32,22 +34,22 @@ impl Parser {
 
     fn advance(&mut self) {
         self.index += 1;
-        self.current_token = if self.tokens.len() > self.index {self.tokens[self.index]} else {Token::NONE};
+        self.current_token = if self.tokens.len() > self.index { self.tokens[self.index] } else { Token::NONE };
     }
 
     fn factor(&mut self) -> Result<node::Node, SyntaxError> {
         if matches!(self.current_token, Token::AS('+')) || matches!(self.current_token, Token::AS('-')) {
             let ars = self.current_token;
             self.advance();
-            return Ok(node::Node::UnOp(ars, Box::new(self.factor().unwrap())))
+            return Ok(node::Node::UnOp(ars, Box::new(self.factor().unwrap())));
         } else if matches!(self.current_token, Token::AS('(')) {
             self.advance();
             let expr = self.expr();
             if matches!(self.current_token, Token::AS(')')) {
                 self.advance();
-                return Ok(expr.unwrap())
+                return Ok(expr.unwrap());
             }
-        } else if matches!(self.current_token, Token::FLOAT(_)) || matches!(self.current_token, Token::INTEGER(_))  {
+        } else if matches!(self.current_token, Token::FLOAT(_)) || matches!(self.current_token, Token::INTEGER(_)) {
             let node = node::Node::Number(self.current_token);
             self.advance();
             return Ok(node);

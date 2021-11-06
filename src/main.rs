@@ -1,8 +1,10 @@
 use std::io;
 use std::io::Write;
 use crate::lexer::Lexer;
+use crate::parser::Parser;
 
 #[path = "typo/lexer/lexer.rs"] mod lexer;
+#[path = "typo/parser/parser.rs"] mod parser;
 
 fn main() {
     loop {
@@ -17,8 +19,8 @@ fn main() {
 
         let mut lexer = Lexer::new(input);
 
-        for token in lexer.make_tokens() {
-            println!("{}", token)
-        }
+        let mut parser = Parser::new(&mut lexer.make_tokens());
+
+        println!("{}", parser.parse().unwrap());
     }
 }

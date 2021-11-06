@@ -1,6 +1,7 @@
 use std::fmt;
 use std::fmt::{Debug, Formatter};
 use crate::lexer::token::Token;
+use std::result::Result;
 
 #[path = "rules.rs"]
 mod rules;
@@ -44,7 +45,7 @@ impl Lexer {
         return Err(IllegalCharError);
     }
 
-    fn advance(&mut self) {
+    pub fn advance(&mut self) {
         self.index += 1;
         self.current_char = if self.index < self.chars.len() { self.chars[self.index] } else { '\0' };
     }

@@ -5,6 +5,7 @@ use crate::parser::Parser;
 
 #[path = "typo/lexer/lexer.rs"] mod lexer;
 #[path = "typo/parser/parser.rs"] mod parser;
+#[path = "typo/interpreter/interpreter.rs"] mod interpreter;
 
 fn main() {
     loop {
@@ -21,6 +22,6 @@ fn main() {
 
         let mut parser = Parser::new(&mut lexer.make_tokens());
 
-        println!("{}", parser.parse().unwrap());
+        println!("{}", interpreter::visit(parser.parse().unwrap()));
     }
 }

@@ -1,5 +1,5 @@
 #[path = "./node.rs"]
-mod node;
+pub mod node;
 
 use std::boxed::Box;
 use crate::lexer::token::Token;
